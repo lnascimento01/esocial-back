@@ -1,0 +1,64 @@
+version: '3'
+
+#Docker Networks 
+networks:
+  esocial-network:
+    name: esocial-network
+    driver: bridge
+#Volumes
+volumes:
+  dbdata:
+    driver: local
+
+services:
+
+  #MySQL Container
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    container_name: ms-esocial-db
+    tty: true
+    environment:
+      ACCEPT_EULA: "Y"
+      MYSQL_ROOT_PASSWORD: "esocial@2022"
+    ports:
+      - "3306:3306"
+    networks:
+      - esocial-network
+  
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    container_name: ms-esocial-app
+    working_dir: /var/www
+    image: php:8.1.1-fpm
+    restart: unless-stopped
+    ports:
+      - "8181:80"
+    volumes:
+      - .:/var/www
+      -  ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - esocial-network
+
+      
+  #Nginx Service
+  nginx:
+    image: nginx:alpine
+    container_name: ms-esocial-webserver
+    restart: unless-stopped
+    tty: true
+    expose:
+      - "8009"
+    ports:
+      - "8009:80"
+    volumes:
+      - .:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - esocial-network
