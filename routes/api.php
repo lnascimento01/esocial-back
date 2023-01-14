@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [DomainController::class, 'getDomain']);
         Route::get('/', [DomainController::class, 'list']);
         Route::post('/', [DomainController::class, 'create']);
+        Route::post('/batch', [DomainController::class, 'batch']);
         Route::patch('/', [DomainController::class, 'patch']);
         Route::delete('/{id}', [DomainController::class, 'delete']);
     });

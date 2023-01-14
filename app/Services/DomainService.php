@@ -29,11 +29,15 @@ class DomainService
                 ], 401);
             }
 
-            $expirationDate = Carbon::parse($this->getExpirationDate($request)->eventDate);
+            $expirationDate = Carbon::parse(
+                $this->getExpirationDate(
+                    implode($request->only(['name', 'tld']))
+                )->eventDate
+            );
             $request->merge([
                 'expiration_date' => $expirationDate->format('Y-m-d')
             ]);
-            $domain = $this->saveDomain($request);
+            $domain = $this->saveDomain($request->all());
 
             return [
                 'status' => true,
@@ -48,18 +52,15 @@ class DomainService
         }
     }
 
-    protected function saveDomain(Request $request): Domain
+    protected function saveDomain(array $request): Domain
     {
-        $domain = Domain::create($request->all());
+        $domain = Domain::create($request);
 
         return $domain;
     }
 
-    protected function getExpirationDate(Request $request): object
+    protected function getExpirationDate(string $domain): object
     {
-        $domain = implode($request->only(['name', 'tld']));
-
-
         $whois = new Client([
             'base_uri' => env('WHOIS_URI')
         ]);
@@ -129,6 +130,44 @@ class DomainService
                 'status' => true,
                 'message' => 'Domínio atualizado com sucesso',
                 'id' => $request->id
+            ];
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function batch(Request $request)
+    {
+        try {
+            $file = fopen($request->import->path(), "r");
+            $header = true;
+            $ids = [];
+
+            while (($fileContent = fgetcsv($file, 255, ",")) !== FALSE) {
+                if ($header) {
+                    $header = false;
+                    continue;
+                }
+                $expirationDate = Carbon::parse(
+                    $this->getExpirationDate(
+                        implode($fileContent)
+                    )->eventDate
+                );
+                
+                $ids[] = $this->saveDomain([
+                    'name' => $fileContent[0],
+                    'tld' => $fileContent[1],
+                    'expiration_date' => $expirationDate
+                ])->id;
+            }
+
+            return [
+                'status' => true,
+                'message' => 'Domínio criado com sucesso',
+                'id' => implode(',', $ids)
             ];
         } catch (\Throwable $th) {
             return response()->json([
