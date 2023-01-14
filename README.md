@@ -26,6 +26,6 @@ O projeto tem em vista atender os requisitos a serem realizadas em teste para a 
 ## Como iniciar projeto
 
 O projeto pode ser iniciado rodando o comando padrão do laravel (php artisan serve) ou via docker pelo comando (docker-compose -f docker-compose.yml up --build);
-Após isso, rodar o comando de migração (php artisa migrate) e o projeto já está rodando e funcional.
+Após isso, rodar o comando de migração (php artisan migrate) e o projeto já está rodando e funcional.
 
 Na raiz do projeto se encontram as documentações via postman json, [Authetication](https://github.com/lnascimento01/esocial-back/blob/master/Authentication.postman_collection.json) e [Domain](https://github.com/lnascimento01/esocial-back/blob/master/Domains.postman_collection.json) .
