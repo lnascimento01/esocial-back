@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\AlertExpiration;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\DomainController;
 use Illuminate\Http\Request;
@@ -21,7 +22,11 @@ Route::prefix('/auth')->group(function () {
     Route::post('/register', [AuthenticationController::class, 'register']);
 });
 
+Route::get('/event', function (Request $request) {
+    AlertExpiration::dispatch();
+});
 
+Route::get('/', [DomainController::class, 'exportCsv']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
