@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\DomainController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,8 +21,17 @@ Route::prefix('/auth')->group(function () {
     Route::post('/register', [AuthenticationController::class, 'register']);
 });
 
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
+    });
+
+    Route::prefix('/domain')->group(function () {
+        Route::get('/{id}', [DomainController::class, 'getDomain']);
+        Route::get('/', [DomainController::class, 'list']);
+        Route::post('/', [DomainController::class, 'create']);
+        Route::patch('/', [DomainController::class, 'patch']);
+        Route::delete('/{id}', [DomainController::class, 'delete']);
     });
 });
