@@ -15,8 +15,7 @@ class DomainController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param DomainService $domainService
+     * @param int $id
      * @return JsonResponse
      */
     public function getDomain(int $id): JsonResponse
@@ -25,8 +24,6 @@ class DomainController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param DomainService $domainService
      * @return JsonResponse
      */
     public function list(): JsonResponse
@@ -58,7 +55,6 @@ class DomainController extends Controller
         return response()->json($create);
     }
 
-
     /**
      * @param int $id
      * @param DomainService $domainService
@@ -69,5 +65,21 @@ class DomainController extends Controller
         $delete = $this->domainService->delete($id);
 
         return response()->json($delete);
+    }
+
+    /**
+     * @param Request $request
+     * @param DomainService $domainService
+     * @return JsonResponse
+     */
+    public function batch(Request $request): JsonResponse
+    {
+        if ($request->hasFile('import')) {
+            $batch = $this->domainService->batch($request);
+
+            return response()->json($batch);
+        }
+
+        return response()->json('Arquivo inválido', 500);
     }
 }
