@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Domain;
 use App\Services\DomainService;
+use App\Services\ExportService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DomainController extends Controller
 {
     public function __construct(
-        private DomainService $domainService
+        private DomainService $domainService,
+        private ExportService $exportService
     ) {
     }
 
@@ -81,5 +83,10 @@ class DomainController extends Controller
         }
 
         return response()->json('Arquivo inválido', 500);
+    }
+
+    public function exportCsv()
+    {
+        return $this->exportService->exportDomainCsv();
     }
 }

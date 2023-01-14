@@ -28,6 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('/domain')->group(function () {
+        Route::prefix('/export')->group(function () {
+            Route::get('/', [DomainController::class, 'exportCsv']);
+        });
         Route::get('/{id}', [DomainController::class, 'getDomain']);
         Route::get('/', [DomainController::class, 'list']);
         Route::post('/', [DomainController::class, 'create']);

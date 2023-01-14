@@ -102,7 +102,7 @@ class DomainService
         }
     }
 
-    public function patch(Request $request)
+    public function patch(Request $request): array
     {
         try {
             $validateUser = Validator::make(
@@ -139,7 +139,7 @@ class DomainService
         }
     }
 
-    public function batch(Request $request)
+    public function batch(Request $request): array
     {
         try {
             $file = fopen($request->import->path(), "r");
